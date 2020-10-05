@@ -21,10 +21,13 @@ class Graph:
         """
         Add a directed edge to the graph.
         """
+        # check if vertices exist
         if v1 in self.vertices and v2 in self.vertices:
             self.vertices[v1].add(v2)
+        # if one of them doesn't, check whether it's v1
         elif v1 not in self.vertices:
             raise Exception(f"Vortex '{v1}' doesn't exist.")
+        # else check if it's v2
         else:
             raise Exception(f"Vortex '{v2}' doesn't exist.")
 
@@ -32,7 +35,10 @@ class Graph:
         """
         Get all neighbors (edges) of a vertex.
         """
-        pass  # TODO
+        # # check if there are any neighbors
+        # if not len(self.vertices):
+        #     return None
+        return self.vertices[vertex_id]
 
     def bft(self, starting_vertex):
         """
