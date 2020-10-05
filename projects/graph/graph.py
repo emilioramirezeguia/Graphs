@@ -74,7 +74,7 @@ class Graph:
         stack = Stack()
         visited = set()
 
-        # set the starting vortex
+        # set the starting vertex
         stack.push(starting_vertex)
 
         while stack.size():
@@ -93,7 +93,23 @@ class Graph:
 
         This should be done using recursion.
         """
-        pass  # TODO
+        stack = Stack()
+        visited = set()
+
+        # set the starting vertex
+        stack.push(starting_vertex)
+
+        # base case: stack size is empty
+        if stack.size() == 0:
+            return
+
+        current_vertex = stack.pop()
+        if current_vertex not in visited:
+            print(current_vertex)
+            visited.add(current_vertex)
+            for neighbor in self.get_neighbors(current_vertex):
+                stack.push(neighbor)
+            self.dft_recursive(current_vertex)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
