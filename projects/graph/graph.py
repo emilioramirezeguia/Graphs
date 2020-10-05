@@ -21,7 +21,12 @@ class Graph:
         """
         Add a directed edge to the graph.
         """
-        self.vertices[v1].add(v2)
+        if v1 in self.vertices and v2 in self.vertices:
+            self.vertices[v1].add(v2)
+        elif v1 not in self.vertices:
+            raise Exception(f"Vortex '{v1}' doesn't exist.")
+        else:
+            raise Exception(f"Vortex '{v2}' doesn't exist.")
 
     def get_neighbors(self, vertex_id):
         """
