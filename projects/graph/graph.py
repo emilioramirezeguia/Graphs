@@ -45,7 +45,26 @@ class Graph:
         Print each vertex in breadth-first order
         beginning from starting_vertex.
         """
-        pass  # TODO
+        queue = Queue()
+        visited = set()
+
+        # set the starting vertex
+        queue.enqueue(starting_vertex)
+
+        # while there are vertices in the queue
+        while queue.size():
+            # pop the first vertex in line
+            current_vertex = queue.dequeue()
+            # check whether it's been visited before
+            if current_vertex not in visited:
+                # print it
+                print(current_vertex)
+                # add it's neighbors (adjacent nodes) to our queue
+                neighbors = self.get_neighbors(current_vertex)
+                for neighbor in neighbors:
+                    queue.enqueue(neighbor)
+                # and add it to our visited
+                visited.add(current_vertex)
 
     def dft(self, starting_vertex):
         """
@@ -134,26 +153,26 @@ if __name__ == '__main__':
     '''
     graph.bft(1)
 
-    '''
-    Valid DFT paths:
-        1, 2, 3, 5, 4, 6, 7
-        1, 2, 3, 5, 4, 7, 6
-        1, 2, 4, 7, 6, 3, 5
-        1, 2, 4, 6, 3, 5, 7
-    '''
-    graph.dft(1)
-    graph.dft_recursive(1)
+    # '''
+    # Valid DFT paths:
+    #     1, 2, 3, 5, 4, 6, 7
+    #     1, 2, 3, 5, 4, 7, 6
+    #     1, 2, 4, 7, 6, 3, 5
+    #     1, 2, 4, 6, 3, 5, 7
+    # '''
+    # graph.dft(1)
+    # graph.dft_recursive(1)
 
-    '''
-    Valid BFS path:
-        [1, 2, 4, 6]
-    '''
-    print(graph.bfs(1, 6))
+    # '''
+    # Valid BFS path:
+    #     [1, 2, 4, 6]
+    # '''
+    # print(graph.bfs(1, 6))
 
-    '''
-    Valid DFS paths:
-        [1, 2, 4, 6]
-        [1, 2, 4, 7, 6]
-    '''
-    print(graph.dfs(1, 6))
-    print(graph.dfs_recursive(1, 6))
+    # '''
+    # Valid DFS paths:
+    #     [1, 2, 4, 6]
+    #     [1, 2, 4, 7, 6]
+    # '''
+    # print(graph.dfs(1, 6))
+    # print(graph.dfs_recursive(1, 6))
