@@ -104,12 +104,13 @@ class Graph:
             return
 
         current_vertex = stack.pop()
+
         if current_vertex not in visited:
             print(current_vertex)
             visited.add(current_vertex)
             for neighbor in self.get_neighbors(current_vertex):
                 stack.push(neighbor)
-            self.dft_recursive(current_vertex)
+            return self.dft_recursive(current_vertex)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -117,7 +118,21 @@ class Graph:
         starting_vertex to destination_vertex in
         breath-first order.
         """
-        pass  # TODO
+        queue = Queue()
+        queue.enqueue([starting_vertex])
+        visited = set()
+
+        while queue.size():
+            current_path = queue.dequeue()
+            last_vertex = current_path[len(current_path)-1]
+            if last_vertex not in visited:
+                if last_vertex == destination_vertex:
+                    return current_path
+                visited.add(last_vertex)
+                for neighbor in self.get_neighbors(last_vertex):
+                    new_path = current_path
+                    new_path.append(neighbor)
+                    queue.enqueue(new_path)
 
     def dfs(self, starting_vertex, destination_vertex):
         """
@@ -190,13 +205,15 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     graph.dft(1)
-    graph.dft_recursive(1)
+    # print("DFT RECURSIVE BELOW")
+    # graph.dft_recursive(1)
 
-    # '''
-    # Valid BFS path:
-    #     [1, 2, 4, 6]
-    # '''
-    # print(graph.bfs(1, 6))
+    '''
+    Valid BFS path:
+        [1, 2, 4, 6]
+    '''
+    print("BFS below")
+    print(graph.bfs(1, 6))
 
     # '''
     # Valid DFS paths:
