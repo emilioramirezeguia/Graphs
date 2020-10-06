@@ -180,24 +180,23 @@ class Graph:
         if visited is None:
             visited = set()
         if path is None:
-            path = [starting_vertex]
+            path = []
 
-        print(starting_vertex)
         visited.add(starting_vertex)
+        path = path + [starting_vertex]
 
         if starting_vertex == destination_vertex:
             return path
 
         for neighbor in self.get_neighbors(starting_vertex):
             if neighbor not in visited:
-                new_path = path + [neighbor]
-                if neighbor == destination_vertex:
-                    return new_path
-
                 dfs_path = self.dfs_recursive(
-                    neighbor, destination_vertex, visited, new_path)
+                    neighbor, destination_vertex, visited, path)
                 if dfs_path is not None:
                     return dfs_path
+
+        # if it doesn't find anything, return None
+        return None
 
 
 if __name__ == '__main__':
