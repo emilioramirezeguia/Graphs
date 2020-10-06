@@ -129,8 +129,9 @@ class Graph:
                 if last_vertex == destination_vertex:
                     return current_path
                 visited.add(last_vertex)
-                for neighbor in self.get_neighbors(last_vertex):
-                    new_path = current_path
+                neighbors = self.get_neighbors(last_vertex)
+                for neighbor in neighbors:
+                    new_path = current_path.copy()
                     new_path.append(neighbor)
                     queue.enqueue(new_path)
 
@@ -140,7 +141,22 @@ class Graph:
         starting_vertex to destination_vertex in
         depth-first order.
         """
-        pass  # TODO
+        stack = Stack()
+        stack.push([starting_vertex])
+        visited = set()
+
+        while stack.size():
+            current_path = stack.pop()
+            last_vertex = current_path[len(current_path)-1]
+            if last_vertex not in visited:
+                if last_vertex == destination_vertex:
+                    return current_path
+                visited.add(last_vertex)
+                neighbors = self.get_neighbors(last_vertex)
+                for neighbor in neighbors:
+                    new_path = current_path.copy()
+                    new_path.append(neighbor)
+                    stack.push(new_path)
 
     def dfs_recursive(self, starting_vertex, destination_vertex):
         """
@@ -212,13 +228,12 @@ if __name__ == '__main__':
     Valid BFS path:
         [1, 2, 4, 6]
     '''
-    print("BFS below")
     print(graph.bfs(1, 6))
 
-    # '''
-    # Valid DFS paths:
-    #     [1, 2, 4, 6]
-    #     [1, 2, 4, 7, 6]
-    # '''
-    # print(graph.dfs(1, 6))
+    '''
+    Valid DFS paths:
+        [1, 2, 4, 6]
+        [1, 2, 4, 7, 6]
+    '''
+    print(graph.dfs(1, 6))
     # print(graph.dfs_recursive(1, 6))
