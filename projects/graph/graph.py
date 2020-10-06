@@ -86,31 +86,42 @@ class Graph:
                 for neighbor in neighbors:
                     stack.push(neighbor)
 
-    def dft_recursive(self, starting_vertex):
+    def dft_recursive(self, starting_vertex, visited=None):
         """
         Print each vertex in depth-first order
         beginning from starting_vertex.
 
         This should be done using recursion.
         """
-        stack = Stack()
-        visited = set()
 
-        # set the starting vertex
-        stack.push(starting_vertex)
+        if visited is None:
+            visited = set()
+        # add the starting vertex to visited
+        visited.add(starting_vertex)
+        print(starting_vertex)
 
-        # base case: stack size is empty
-        if stack.size() == 0:
-            return
+        for value in self.vertices[starting_vertex]:
+            if value not in visited:
+                self.dft_recursive(value, visited)
 
-        current_vertex = stack.pop()
+        # stack = Stack()
+        # visited = set()
 
-        if current_vertex not in visited:
-            print(current_vertex)
-            visited.add(current_vertex)
-            for neighbor in self.get_neighbors(current_vertex):
-                stack.push(neighbor)
-            return self.dft_recursive(current_vertex)
+        # # set the starting vertex
+        # stack.push(starting_vertex)
+
+        # # base case: stack size is empty
+        # if stack.size() == 0:
+        #     return
+
+        # current_vertex = stack.pop()
+
+        # if current_vertex not in visited:
+        #     print(current_vertex)
+        #     visited.add(current_vertex)
+        #     for neighbor in self.get_neighbors(current_vertex):
+        #         stack.push(neighbor)
+        #     return self.dft_recursive(current_vertex)
 
     def bfs(self, starting_vertex, destination_vertex):
         """
@@ -221,8 +232,8 @@ if __name__ == '__main__':
         1, 2, 4, 6, 3, 5, 7
     '''
     graph.dft(1)
-    # print("DFT RECURSIVE BELOW")
-    # graph.dft_recursive(1)
+    print("DFT RECURSIVE BELOW")
+    graph.dft_recursive(1)
 
     '''
     Valid BFS path:
