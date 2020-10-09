@@ -26,19 +26,23 @@ world.load_graph(room_graph)
 world.print_rooms()
 
 player = Player(world.starting_room)
-print("#### player starts here ####")
-print("ID of the room the player is in.", player.current_room.id)
-print("Exits of that room", player.current_room.get_exits())
-print("Show room north to me", player.travel('n'))
-print("#### player ends here ####")
 
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
-traversal_graph = Graph()
-traversal_graph.add_vertex(Vertex(player.current_room.id))
-traversal_graph.add_edge("n", "s")
-print("Traversal Graph until now: ", traversal_graph.vertices[1].edges)
+traversal_graph = {}
+
+# grab the exits from the player's starting room and populate my initial graph
+if player.current_room.id not in traversal_graph:
+    traversal_graph[player.current_room.id] = {}
+    for exit in player.current_room.get_exits():
+        if exit not in traversal_graph[player.current_room.id]:
+            traversal_graph[player.current_room.id][exit] = "?"
+
+
+
+
+### DO NOT WRITE ANYTHING BELOW THIS LINE ###
 
 # TRAVERSAL TEST
 visited_rooms = set()

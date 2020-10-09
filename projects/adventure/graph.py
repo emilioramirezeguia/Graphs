@@ -5,23 +5,23 @@ from util import Stack, Queue  # These may come in handy
 
 
 class Vertex:
-    def __init__(self, value):
-        self.value = value
-        self.edges = {}
+    def __init__(self, room_id):
+        self.room_id = room_id
+        self.exits = {}
 
-    def add_edge(self, exit, room="?"):
-        self.edges[exit] = room
+    def add_exit(self, exit, room_id="?"):
+        self.exits[exit] = room_id
 
-    def get_edges(self):
-        return self.edges.keys()
+    def get_exits(self):
+        return self.exits.keys()
 
 
 class Graph:
     def __init__(self):
         self.vertices = {}
 
-    def add_vertex(self, vertex):
-        self.vertices[vertex.value] = vertex
+    def add_vertex(self, room_id):
+        self.vertices[room_id] = {}
 
     def add_edge(self, from_exit, to_exit, room="?"):
         self.vertices[from_exit.value].add_edge(to_exit.value, room)
