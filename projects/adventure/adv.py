@@ -121,9 +121,11 @@ def explore():
 
 
 populate_graph()
+print("Starting Walking Directions: ", traversal_path)
 print("Starting Graph: ", traversal_graph)
 explore()
 print("Updated Graph: ", traversal_graph)
+print("Ending Walking Directions", traversal_path)
 print(f"{len(visited)} out of {len(room_graph)} rooms visited.")
 
 ### DO NOT WRITE ANYTHING BELOW THIS LINE ###
