@@ -12,10 +12,10 @@ world = World()
 
 # You may uncomment the smaller graphs for development and testing purposes.
 # map_file = "maps/test_line.txt"
-map_file = "maps/test_cross.txt"
+# map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-# map_file = "maps/main_maze.txt"
+map_file = "maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph = literal_eval(open(map_file, "r").read())
@@ -58,7 +58,6 @@ def update_graph(exit):
             traversal_graph[player.current_room.id][ex] = "?"
 
     room_in_direction = player.current_room.get_room_in_direction(exit)
-    print("ROOM IN DIRECTION?: ", room_in_direction.name)
     traversal_graph[player.current_room.id][exit] = room_in_direction.id
 
 
@@ -122,47 +121,41 @@ def explore():
 
     while stack.size() > 0:
         current_room = stack.pop()
-        print("CURRENT ROOM: ", current_room)
 
         if current_room not in visited:
             if current_room not in traversal_graph:
                 populate_graph()
-                print("MY GRAPH: ", traversal_graph)
 
             unvisited_rooms = grab_exits(current_room)
-            print("UNVISITED ROOMS: ", unvisited_rooms)
 
             if len(unvisited_rooms) > 0:
                 next_room = unvisited_rooms[0]
-                print("NEXT ROOM: ", next_room)
+
                 update_graph(next_room)
-                print("UPDATED GRAPH: ", traversal_graph)
+
                 player.travel(next_room)
-                print("WHERE AM I NOW? ", player.current_room.name)
+
                 opposite_exit = grab_opposite_exit(next_room)
-                print("OPPOSITE EXIT: ", opposite_exit)
+
                 update_graph(opposite_exit)
-                print("UPDATED GRAPH: ", traversal_graph)
+
                 stack.push(player.current_room.id)
                 traversal_path.append(next_room)
-                print("TRAVERSAL PATH: ", traversal_path)
+
                 backward_path.append(opposite_exit)
-                print("BACKWARD PATH: ", backward_path)
+
             else:
                 visited.add(current_room)
                 stack.push(current_room)
-                print("VISITED? ", visited)
-                print("STACK NOW? ", stack.stack)
+
         else:
             if len(backward_path) > 0:
                 previous_room = backward_path.pop()
-                print("PREVIOUS ROOM? ", previous_room)
+
                 player.travel(previous_room)
-                print("WHERE AM I NOW? ", player.current_room.name)
+
                 traversal_path.append(previous_room)
                 stack.push(player.current_room.id)
-                print("VISITED? ", visited)
-                print("STACK NOW? ", stack.stack)
 
 
 explore()
