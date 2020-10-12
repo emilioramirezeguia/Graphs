@@ -51,16 +51,6 @@ def grab_exits(room):
     return unvisited_rooms
 
 
-def update_graph(exit):
-    if player.current_room.id not in traversal_graph:
-        traversal_graph[player.current_room.id] = {}
-        for ex in player.current_room.get_exits():
-            traversal_graph[player.current_room.id][ex] = "?"
-
-    room_in_direction = player.current_room.get_room_in_direction(exit)
-    traversal_graph[player.current_room.id][exit] = room_in_direction.id
-
-
 def grab_opposite_exit(exit):
     if exit == "n":
         exit = "s"
@@ -79,39 +69,28 @@ def grab_opposite_exit(exit):
         return
 
 
-def pick_random():
-    room_exits = player.current_room.get_exits()
-    number_exits = len(room_exits)
-    random_exit = room_exits[random.randint(0, number_exits - 1)]
+def update_graph(exit):
+    if player.current_room.id not in traversal_graph:
+        traversal_graph[player.current_room.id] = {}
+        for ex in player.current_room.get_exits():
+            traversal_graph[player.current_room.id][ex] = "?"
 
-    return random_exit
+    room_in_direction = player.current_room.get_room_in_direction(exit)
+    traversal_graph[player.current_room.id][exit] = room_in_direction.id
 
-# choose a random exit that I haven't gone before (has a "?")
-# go there and update my graph both ways with my new information
-# keep track of the path I just followed forwards ("north")
-# and at the same time keep track of the steps backwards ("south")
-# as I move to new rooms, keep updating my graph
-# when I hit a dead end, back up a room
-# check for rooms that I haven't gone before ("?")
-# if no rooms left to explore, go back again
-# when I arrive at a room with rooms to explore, go there and repeat
 
-# create an empty stack and a visited set
-# push the player's starting room to the stack
-# while the stack has rooms in there...
+# create an empty stack and visited set
+# push the player's current room to the stack
+# while the stach has rooms in it...
 # pop the current room
-# check if room is not in visited
-#### make sure to push room into stack before skipping any logic ####
-# if it's not visited, check if it's in the graph already
-# if it's not in the graph, initialize it and grab unvisited rooms
-# check length of unvisited rooms
-# if has unvisited rooms, move player, push room into stack, update path
-# if I don't have unvisited rooms, add room to visited and
-# skip the rest of logic
-# if the room is visited
-# check if I have reverse path available
-# remove direction from reverse path, move the player back and update traversal path
-# room 0 is going to be put in visited at the very last
+# and check if the room is not in visited
+# if it's not in visited, check if it's not in the graph
+# if it's not in the graph, initialize the room and set its adjacent rooms equal to "?"
+# then check if there are any unvisited rooms
+# if there are any unvisited rooms, travel there, update the graph both ways, update the paths forwards and backwards, and push the new room to the stack
+# if there aren't any unvisited rooms (no more "?"), add that room to the visited set and push the current room to the stack
+# if the room is in already in visited, check if there is a path backwards
+# if there is a path backwards, travel there, remove update the paths forwards and backwards, and push the new room to the stack
 
 
 def explore():
@@ -141,7 +120,6 @@ def explore():
 
                 stack.push(player.current_room.id)
                 traversal_path.append(next_room)
-
                 backward_path.append(opposite_exit)
 
             else:
