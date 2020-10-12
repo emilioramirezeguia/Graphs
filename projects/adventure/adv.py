@@ -7,14 +7,12 @@ from ast import literal_eval
 from graph import Vertex, Graph
 from util import Stack, Queue
 
-
 # Load world
 world = World()
 
-
 # You may uncomment the smaller graphs for development and testing purposes.
-map_file = "maps/test_line.txt"
-# map_file = "maps/test_cross.txt"
+# map_file = "maps/test_line.txt"
+map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
 # map_file = "maps/main_maze.txt"
@@ -32,29 +30,36 @@ player = Player(world.starting_room)
 # traversal_path = ['n', 'n']
 traversal_path = []
 traversal_graph = {}
-
-# grab the exits from the player's starting room and populate my initial graph
+backward_path = []
 
 
 def populate_graph():
-    traversal_graph[player.current_room.id] = {}
+    if player.current_room.id not in traversal_graph:
+        traversal_graph[player.current_room.id] = {}
 
-    for exit in player.current_room.get_exits():
-        traversal_graph[player.current_room.id][exit] = "?"
+        for exit in player.current_room.get_exits():
+            traversal_graph[player.current_room.id][exit] = "?"
+
+
+def grab_exits(room):
+    unvisited_rooms = list()
+
+    for key, value in traversal_graph[room].items():
+        if value == "?":
+            unvisited_rooms.append(key)
+
+    return unvisited_rooms
 
 
 def update_graph(exit):
     if player.current_room.id not in traversal_graph:
         traversal_graph[player.current_room.id] = {}
-
         for ex in player.current_room.get_exits():
-            if ex not in traversal_graph[player.current_room.id]:
-                traversal_graph[player.current_room.id][ex] = "?"
-    else:
-        room_in_direction = player.current_room.get_room_in_direction(exit)
-        traversal_graph[player.current_room.id][exit] = room_in_direction.id
+            traversal_graph[player.current_room.id][ex] = "?"
 
-# pick a random unexplored direction from the player's current room
+    room_in_direction = player.current_room.get_room_in_direction(exit)
+    print("ROOM IN DIRECTION?: ", room_in_direction.name)
+    traversal_graph[player.current_room.id][exit] = room_in_direction.id
 
 
 def grab_opposite_exit(exit):
@@ -82,51 +87,85 @@ def pick_random():
 
     return random_exit
 
+# choose a random exit that I haven't gone before (has a "?")
+# go there and update my graph both ways with my new information
+# keep track of the path I just followed forwards ("north")
+# and at the same time keep track of the steps backwards ("south")
+# as I move to new rooms, keep updating my graph
+# when I hit a dead end, back up a room
+# check for rooms that I haven't gone before ("?")
+# if no rooms left to explore, go back again
+# when I arrive at a room with rooms to explore, go there and repeat
+
 # create an empty stack and a visited set
 # push the player's starting room to the stack
 # while the stack has rooms in there...
 # pop the current room
-# choose a random exit that I haven't gone before
-# go there and update my graph with my new information
-# keep track of the path I just followed ("north")
-
-
-visited = set()
+# check if room is not in visited
+#### make sure to push room into stack before skipping any logic ####
+# if it's not visited, check if it's in the graph already
+# if it's not in the graph, initialize it and grab unvisited rooms
+# check length of unvisited rooms
+# if has unvisited rooms, move player, push room into stack, update path
+# if I don't have unvisited rooms, add room to visited and
+# skip the rest of logic
+# if the room is visited
+# check if I have reverse path available
+# remove direction from reverse path, move the player back and update traversal path
+# room 0 is going to be put in visited at the very last
 
 
 def explore():
     stack = Stack()
-    # start exploring from the player's current room
-    stack.push([player.current_room.id])
+    visited = set()
+    stack.push(player.current_room.id)
 
     while stack.size() > 0:
-        path_as_room_ids = stack.pop()
-        current_room = path_as_room_ids[-1]
+        current_room = stack.pop()
+        print("CURRENT ROOM: ", current_room)
+
         if current_room not in visited:
-            visited.add(current_room)
-            print("Visited: ", visited)
-            print("Path as Room IDs: ", path_as_room_ids)
-            # choose a random exit from that room
-            random_exit = pick_random()
-            if traversal_graph[player.current_room.id][random_exit] == "?":
-                update_graph(random_exit)
-                player.travel(random_exit)
-                traversal_path.append(random_exit)
-                new_path_as_room_ids = path_as_room_ids + \
-                    [player.current_room.id]
-                opposite_direction = grab_opposite_exit(random_exit)
+            if current_room not in traversal_graph:
                 populate_graph()
-                update_graph(opposite_direction)
-                stack.push(new_path_as_room_ids)
+                print("MY GRAPH: ", traversal_graph)
+
+            unvisited_rooms = grab_exits(current_room)
+            print("UNVISITED ROOMS: ", unvisited_rooms)
+
+            if len(unvisited_rooms) > 0:
+                next_room = unvisited_rooms[0]
+                print("NEXT ROOM: ", next_room)
+                update_graph(next_room)
+                print("UPDATED GRAPH: ", traversal_graph)
+                player.travel(next_room)
+                print("WHERE AM I NOW? ", player.current_room.name)
+                opposite_exit = grab_opposite_exit(next_room)
+                print("OPPOSITE EXIT: ", opposite_exit)
+                update_graph(opposite_exit)
+                print("UPDATED GRAPH: ", traversal_graph)
+                stack.push(player.current_room.id)
+                traversal_path.append(next_room)
+                print("TRAVERSAL PATH: ", traversal_path)
+                backward_path.append(opposite_exit)
+                print("BACKWARD PATH: ", backward_path)
+            else:
+                visited.add(current_room)
+                stack.push(current_room)
+                print("VISITED? ", visited)
+                print("STACK NOW? ", stack.stack)
+        else:
+            if len(backward_path) > 0:
+                previous_room = backward_path.pop()
+                print("PREVIOUS ROOM? ", previous_room)
+                player.travel(previous_room)
+                print("WHERE AM I NOW? ", player.current_room.name)
+                traversal_path.append(previous_room)
+                stack.push(player.current_room.id)
+                print("VISITED? ", visited)
+                print("STACK NOW? ", stack.stack)
 
 
-populate_graph()
-print("Starting Walking Directions: ", traversal_path)
-print("Starting Graph: ", traversal_graph)
 explore()
-print("Updated Graph: ", traversal_graph)
-print("Ending Walking Directions", traversal_path)
-print(f"{len(visited)} out of {len(room_graph)} rooms visited.")
 
 ### DO NOT WRITE ANYTHING BELOW THIS LINE ###
 
